@@ -184,8 +184,7 @@ jobs:
         run: |
           ssh root@${{ secrets.SERVER_HOST }} "sudo mkdir -p ~/.github/docker-compose"
           scp -r ./.github/docker-compose/* root@${{ secrets.SERVER_HOST }}:~/.github/docker-compose/
-          ssh root@${{ secrets.SERVER_HOST }} "cd ./.github/docker-compose && sudo docker-compose down || true"
-          ssh root@${{ secrets.SERVER_HOST }} "sudo docker-compose down --rmi all || true"
+          ssh root@${{ secrets.SERVER_HOST }} "cd ./.github/docker-compose && sudo docker-compose -p ${{ vars.IMAGE_BASE_NAME }} down --rmi all || true"
           ssh root@${{ secrets.SERVER_HOST }} "cd ./.github/docker-compose && \
             sudo -E IMAGE_NAME=registry.cn-hangzhou.aliyuncs.com/manchaof/${{ vars.IMAGE_BASE_NAME }}:latest\
             ENV=${{ vars.ENV_NAME }} \
@@ -193,4 +192,4 @@ jobs:
             POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
             ACCESS_PORT=${{ vars.ACCESS_PORT }} \
             DB_ACCESS_PORT=${{ vars.DB_ACCESS_PORT }} \
-            docker-compose up -d"
+            docker-compose -p ${{ vars.IMAGE_BASE_NAME }} up -d"
